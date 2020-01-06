@@ -1,0 +1,15 @@
+[
+    {
+        "model": "item.item",
+        "fields": {
+            "name": "item1",
+            "quantity": "10"
+        }
+    }, {
+        "model": "item.item",
+        "fields": {
+            "name": "item2",
+            "quantity": "10"
+        }
+    }
+]
