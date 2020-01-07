@@ -11,6 +11,28 @@ class Ingredient(models.Model):
     dry = models.CharField(max_length=1)
     sensitive = models.CharField(max_length=1)
 
+    def ingredient_score(self):
+        """ 
+        calculate ingredient score by using oily, dry, sensitive columns
+        based on the following criteria
+        
+        < criteria >
+        "O" -> +1
+        " " -> +0
+        "-" -> -1
+
+        """
+        score = 0
+        for each in (self.oily, self.dry, self.sensitive):
+            if each == "O":
+                score += 1
+            elif each == "X":
+                score -= 1
+        return score
+
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
 
@@ -39,5 +61,16 @@ class Product(models.Model):
     ingredients = models.ManyToManyField("Ingredient", related_name="products",)
     monthlySales = models.IntegerField()
 
-    def calculate_ingredient_score(self) -> int:
-        pass
+    def product_score(self):
+        """
+        calculate ingredient score of product
+        by adding each score of ingredient
+        """
+        score = 0
+        for ingredient in self.ingredients.all():
+            score += ingredient.ingredient_score()
+        return score
+
+    def __str__(self):
+        return self.name
+
