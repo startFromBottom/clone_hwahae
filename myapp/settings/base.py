@@ -40,7 +40,9 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "rest_framework",
+]
 
 PROJECT_APPS = [
     "myapp.home",
@@ -62,7 +64,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-ROOT_URLCONF = "myapp.urls"
+ROOT_URLCONF = "myapp.home.urls"
 
 TEMPLATES = [
     {
@@ -120,3 +122,5 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = (os.path.join(PROJECT_DIR, "static"),)
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# REST FRAMEWORK
