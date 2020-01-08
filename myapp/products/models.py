@@ -1,14 +1,9 @@
 from django.db import models
+from .queryparams_validators import SkinTypes
 
 
 class OtherCharException(Exception):
     pass
-
-
-class SkinTypes:
-    OILY = "oily"
-    SENSITIVE = "sensitive"
-    DRY = "dry"
 
 
 class Ingredient(models.Model):
@@ -78,9 +73,8 @@ class Product(models.Model):
         calculate oily score of product
         by adding each score of ingredient
         """
+
         score = 0
-        if skin_type not in (SkinTypes.OILY, SkinTypes.SENSITIVE, SkinTypes.DRY):
-            raise OtherCharException("skin type must be one of oily, sensitive, dry")
         for ingredient in self.ingredients.all():
             if skin_type == SkinTypes.OILY:
                 score += Product.convert_char_to_score(ingredient.oily)
