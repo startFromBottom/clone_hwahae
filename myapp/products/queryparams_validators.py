@@ -68,8 +68,10 @@ class ParamsCheck:
             cls._have_skin_type_param(query_params, possible_params)
             cls._valid_skin_type(query_params)
         except InvalidParamsException:
+            string = ", ".join(possible_params)
             return Response(
-                "invalid query parameters", status=status.HTTP_400_BAD_REQUEST
+                f"invalid query parameters. query parameters must be included in {string}",
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except NotContainSkinTypeException:
             return Response(
