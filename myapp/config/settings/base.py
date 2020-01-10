@@ -45,8 +45,10 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
-    "myapp.home",
+    "myapp.core",
     "myapp.products",
+    "myapp.reviews",
+    "myapp.users",
 ]
 
 
@@ -64,7 +66,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-ROOT_URLCONF = "myapp.home.urls"
+ROOT_URLCONF = "myapp.config.urls"
 
 TEMPLATES = [
     {
@@ -82,7 +84,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "myapp.wsgi.application"
+WSGI_APPLICATION = "myapp.config.wsgi.application"
 
 
 # Password validation
