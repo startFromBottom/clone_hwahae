@@ -6,13 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.exceptions import server_error, ValidationError
 from .models import Ingredient, Product
-from .queryparams_validators import (
-    InvalidParamsException,
-    NotContainSkinTypeException,
-    InvalidSkinTypeException,
-    ParamsCheck,
-    APIParams,
-)
+from .queryparams_validators import ParamsCheck, APIParams
 from .serializers import (
     ProductsListSerializer,
     ProductDetailSerializer,
@@ -32,7 +26,7 @@ class SortProducts:
     @staticmethod
     def sort_products(param: str, querySet: QuerySet):
         """
-        sort product by using 
+        sort product by following criterias
         1) skin_type's score(Descending Order)
         2) monthlySales(Ascending Order)
         """
@@ -43,7 +37,7 @@ class SortProducts:
         return products_list
 
 
-class ProductsListView(ListAPIView):
+class ProductsListAPIView(ListAPIView):
 
     """ list of products API Definition """
 
@@ -95,7 +89,7 @@ class ProductsListView(ListAPIView):
 
     def list(self, request):
         """
-        get queryset from self.filter_queryset
+        get queryset from self.filter_queryset, then send response
 
         - do exception handlings of self.filter_queryset method
         - order by using skin_type's score(Descending Order) and monthlySales(Ascending Order)
@@ -127,7 +121,7 @@ class ProductsListView(ListAPIView):
         return str_list
 
 
-class ProductDetailView(APIView):
+class ProductDetailAPIView(APIView):
 
     """ show detail of product and top3 score products API Definition """
 

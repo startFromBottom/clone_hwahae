@@ -14,5 +14,6 @@ DATABASES = {
         "PASSWORD": "1234",
         "PORT": "3306",
         "OPTIONS": {"charset": "utf8mb4"},
+        "TEST": {"NAME": "test_cosmetic_db",},
     }
 }

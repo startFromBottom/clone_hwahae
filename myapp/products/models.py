@@ -54,7 +54,7 @@ class Product(models.Model):
         folder = "thumbnail"
         base_url = f"https://grepp-programmers-challenges.s3.ap-northeast-2.amazonaws.com/2020-birdview/{folder}/"
 
-        return base_url + self.imageId
+        return base_url + self.imageId + ".jpg"
 
     def ingredient_str(self):
         """
@@ -73,20 +73,18 @@ class Product(models.Model):
         calculate oily score of product
         by adding each score of ingredient
         """
-
         score = 0
         for ingredient in self.ingredients.all():
             if skin_type == SkinTypes.OILY:
-                score += Product.convert_char_to_score(ingredient.oily)
+                score += self._convert_char_to_score(ingredient.oily)
             elif skin_type == SkinTypes.SENSITIVE:
-                score += Product.convert_char_to_score(ingredient.sensitive)
+                score += self._convert_char_to_score(ingredient.sensitive)
             else:  # SkinTypes.DRY
-                score += Product.convert_char_to_score(ingredient.dry)
+                score += self._convert_char_to_score(ingredient.dry)
 
         return score
 
-    @staticmethod
-    def convert_char_to_score(char):
+    def _convert_char_to_score(self, char):
         """
         유익함("O") -> +1
         영향없음("") -> +0

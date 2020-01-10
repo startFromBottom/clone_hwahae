@@ -34,7 +34,7 @@ class ParamsCheck:
     @classmethod
     def _contain_invalidate_param(cls, query_params: QueryDict, possible_params: tuple):
         """
-        if True -> return 404 response in other method
+        if True -> raise exception -> return 404 response in other method
         """
         for param in query_params.keys():
             if param not in possible_params:
@@ -44,7 +44,7 @@ class ParamsCheck:
     @classmethod
     def _have_skin_type_param(cls, query_params: QueryDict, possible_params: tuple):
         """
-        if False -> return 400 response in other method
+        if False -> raise exception -> return 400 response in other method
         """
         for param in query_params.keys():
             if param == SKIN_TYPE_PARAM:
@@ -54,7 +54,7 @@ class ParamsCheck:
     @classmethod
     def _valid_skin_type(cls, query_params: QueryDict):
         """
-        if False -> return 400 response in other method
+        if False -> raise exception -> return 400 response in other method
         """
         value = query_params.get(SKIN_TYPE_PARAM)
         if value not in [SkinTypes.DRY, SkinTypes.OILY, SkinTypes.SENSITIVE]:

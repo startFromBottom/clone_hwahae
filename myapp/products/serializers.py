@@ -25,7 +25,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             "id",
-            # "imgUrl",
+            "imgUrl",
             "name",
             "price",
             "gender",
@@ -42,6 +42,3 @@ class Top3ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ("id", "imgUrl", "name", "price")
-
-    def is_valid(self):
-        return super().is_valid()

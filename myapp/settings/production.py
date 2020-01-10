@@ -19,5 +19,6 @@ DATABASES = {
         "USER": "programmer",
         "PASSWORD": "1234",
         "PORT": "3306",
+        "TEST": {"NAME": "test_cosmetic_db",},
     }
 }
