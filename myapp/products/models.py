@@ -1,12 +1,13 @@
 from django.db import models
 from .queryparams_validators import SkinTypes
+from myapp.core import models as core_models
 
 
 class OtherCharException(Exception):
     pass
 
 
-class Ingredient(models.Model):
+class Ingredient(core_models.TimeStampedModel):
 
     """ Cosmetic Ingredients Model Definition """
 
@@ -20,7 +21,7 @@ class Ingredient(models.Model):
         return self.name
 
 
-class Product(models.Model):
+class Product(core_models.TimeStampedModel):
 
     """ Cosmectic Produdcts Model Definition """
 

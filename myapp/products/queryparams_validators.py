@@ -1,15 +1,10 @@
 from django.http import QueryDict
 from rest_framework.response import Response
 from rest_framework import status
+from myapp.core.models import SkinTypes
 
 
 SKIN_TYPE_PARAM = "skin_type"
-
-
-class SkinTypes:
-    OILY = "oily"
-    SENSITIVE = "sensitive"
-    DRY = "dry"
 
 
 class APIParams:
