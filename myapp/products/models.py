@@ -7,7 +7,7 @@ class OtherCharException(Exception):
     pass
 
 
-class Ingredient(core_models.TimeStampedModel):
+class Ingredient(models.Model):
 
     """ Cosmetic Ingredients Model Definition """
 
@@ -21,7 +21,7 @@ class Ingredient(core_models.TimeStampedModel):
         return self.name
 
 
-class Product(core_models.TimeStampedModel):
+class Product(models.Model):
 
     """ Cosmectic Produdcts Model Definition """
 
@@ -77,15 +77,16 @@ class Product(core_models.TimeStampedModel):
         score = 0
         for ingredient in self.ingredients.all():
             if skin_type == SkinTypes.OILY:
-                score += self._convert_char_to_score(ingredient.oily)
+                score += Product.convert_char_to_score(ingredient.oily)
             elif skin_type == SkinTypes.SENSITIVE:
-                score += self._convert_char_to_score(ingredient.sensitive)
+                score += Product.convert_char_to_score(ingredient.sensitive)
             else:  # SkinTypes.DRY
-                score += self._convert_char_to_score(ingredient.dry)
+                score += Product.convert_char_to_score(ingredient.dry)
 
         return score
 
-    def _convert_char_to_score(self, char):
+    @classmethod
+    def convert_char_to_score(cls, char):
         """
         유익함("O") -> +1
         영향없음("") -> +0

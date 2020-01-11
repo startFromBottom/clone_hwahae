@@ -16,6 +16,11 @@ Django = "==2.2.4"
 pymysql = "*"
 djangorestframework = "*"
 pillow = "*"
+pyjwt = "*"
+dotenv = "*"
+flake8 = "*"
+django-dotenv = "*"
+requests = "*"
 
 [requires]
 python_version = "3.6"

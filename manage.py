@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import os
 import sys
+import dotenv
 
-if __name__ == "__main__":
+
+def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myapp.config.settings.production")
     try:
         from django.core.management import execute_from_command_line
@@ -13,3 +15,8 @@ if __name__ == "__main__":
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    dotenv.read_dotenv()
+    main()

@@ -2,6 +2,7 @@ from django.db.models.query import QuerySet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.exceptions import server_error, ValidationError
@@ -40,6 +41,8 @@ class SortProducts:
 class ProductsListAPIView(ListAPIView):
 
     """ list of products API Definition """
+
+    permission_classes = [IsAuthenticated]
 
     paginator = BasicPagination()
     queryset = Product.objects.all()
@@ -124,6 +127,8 @@ class ProductsListAPIView(ListAPIView):
 class ProductDetailAPIView(APIView):
 
     """ show detail of product and top3 score products API Definition """
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, product_pk):
 

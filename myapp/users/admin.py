@@ -2,7 +2,7 @@ from django.contrib import admin
 from . import models
 
 
-@admin.register(models.HwaHaeUser)
+@admin.register(models.User)
 class CustomUserAdmin(admin.ModelAdmin):
 
     """ Custom User Admin """
@@ -14,12 +14,8 @@ class CustomUserAdmin(admin.ModelAdmin):
         "point",
         "skin_type",
         "login_method",
-        "superuser",
     )
 
-    list_filter = (
-        "skin_type",
-        "superuser",
-    )
+    list_filter = ("skin_type",)
 
     search_fields = ("=username",)

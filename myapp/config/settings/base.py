@@ -91,6 +91,8 @@ WSGI_APPLICATION = "myapp.config.wsgi.application"
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
+AUTH_USER_MODEL = "users.User"
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -130,4 +132,17 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, "uploads")
 
 MEDIA_URL = "/media/"
 
-# REST FRAMEWORK
+# Django Rest Framework
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 50,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "myapp.config.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
+
+# For Development
+
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True

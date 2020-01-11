@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, AbstractUser
 from myapp.core.models import SkinTypes
 from django.utils.translation import gettext_lazy as _
 from myapp.core import models as core_models
 from myapp.core import managers as core_managers
 
 
-class HwaHaeUser(AbstractBaseUser, core_models.TimeStampedModel):
+class User(AbstractUser, core_models.TimeStampedModel):
 
     """ HWAHAE User Model """
 
@@ -38,17 +38,10 @@ class HwaHaeUser(AbstractBaseUser, core_models.TimeStampedModel):
         (LOGIN_NAVER, "Naver"),
     )
 
-    email = models.EmailField(_("email address"), unique=True)
-    username = models.CharField(
-        _("username"),
-        max_length=150,
-        unique=True,
-        error_messages={"unique": "A user with that username already exists."},
-    )
+    nickname = models.CharField(max_length=50)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=10, blank=False,)
     skin_type = models.CharField(choices=SKINTYPE_CHOICES, max_length=10, blank=False,)
     birthdate = models.DateField(blank=True, null=True)
-    superuser = models.BooleanField(default=False)
     email_verified = models.BooleanField(default=False)
     email_secret = models.CharField(max_length=120, default="", blank=True)
     login_method = models.CharField(
@@ -61,4 +54,3 @@ class HwaHaeUser(AbstractBaseUser, core_models.TimeStampedModel):
     )
 
     objects = core_managers.CustomBaseUserManager()
-

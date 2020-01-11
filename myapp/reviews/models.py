@@ -22,7 +22,7 @@ class Review(core_models.TimeStampedModel):
     review = models.TextField()
     score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     user = models.ForeignKey(
-        "users.HwaHaeUser", related_name="reviews", on_delete=models.CASCADE
+        "users.User", related_name="reviews", on_delete=models.CASCADE
     )
     product = models.ForeignKey(
         "products.Product", related_name="reviews", on_delete=models.CASCADE
