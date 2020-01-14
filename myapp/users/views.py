@@ -15,6 +15,11 @@ from django.contrib.auth import get_user_model
 from . import models
 
 
+def log_out(request):
+    logout(request)
+    return Response("log out succeed!")
+
+
 class SignUpAPIView(APIView):
 
     """ Sign up By Email API View Definition """
@@ -45,10 +50,6 @@ class LoginAPIView(APIView):
             return Response(data={"token": encoded_jwt})
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-
-class LogoutAPIView(APIView):
-    pass
 
 
 def login_naver(request):
