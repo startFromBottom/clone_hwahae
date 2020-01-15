@@ -51,7 +51,7 @@ class ProductsListAPIView(ListAPIView):
     def filter_queryset(self, queryset):
         """
         Filtering data according to Programmer's requirements,
-        (ordering data will be handled in self.list method)
+        (ordering data and send response part will be handled in self.list method)
 
         also, Exceptions will be handled in self.list method
 
