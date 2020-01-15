@@ -1,5 +1,4 @@
 import os
-from urllib import parse
 import requests
 import jwt
 from django.conf import settings
@@ -7,7 +6,8 @@ from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+
+# from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer
@@ -254,8 +254,8 @@ class FacebookLoginCallback(APIView, abstract_login.LoginCallback):
         email = profile_response.get("email", None)
         first_name = profile_response.get("first_name", None)
         last_name = profile_response.get("last_name", None)
-        birthday = profile_response.get("birthday", None)
-        age_range = profile_response.get("age_range", None)
+        # birthday = profile_response.get("birthday", None)
+        # age_range = profile_response.get("age_range", None)
         gender = profile_response.get("gender", None)
         username = last_name + first_name  # korean
         # check user already exists

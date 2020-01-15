@@ -19,8 +19,10 @@ class Review(core_models.TimeStampedModel):
 
     """ Review Model Definition """
 
-    review = models.TextField()
+    good_review = models.TextField(default="")
+    bad_review = models.TextField(default="")
     score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    favorites = models.IntegerField(default=0)
     user = models.ForeignKey(
         "users.User", related_name="reviews", on_delete=models.CASCADE
     )

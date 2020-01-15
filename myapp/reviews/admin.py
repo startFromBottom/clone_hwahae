@@ -8,7 +8,9 @@ class ReviewAdmin(admin.ModelAdmin):
     """ Review Admin """
 
     list_display = (
-        "review",
+        "good_review",
+        "bad_review",
+        "score",
         "user",
         "product",
     )

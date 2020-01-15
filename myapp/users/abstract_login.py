@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 class LoginCallback(ABC):
     """
-    OAuth login callback methods defintions
+    login callback based on OAuth2.0 methods defintions
 
     Each method must run sequentially in APIView's GET method.
     """

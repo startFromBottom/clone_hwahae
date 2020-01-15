@@ -2,10 +2,9 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.core.mail import send_mail
-from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import AbstractUser
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from django.utils.translation import gettext_lazy as _
 from myapp.core.models import SkinTypes
 from myapp.core import models as core_models
 from myapp.core import managers as core_managers

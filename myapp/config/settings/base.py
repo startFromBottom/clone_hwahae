@@ -51,6 +51,7 @@ PROJECT_APPS = [
     "myapp.products",
     "myapp.reviews",
     "myapp.users",
+    "myapp.comments",
 ]
 
 
