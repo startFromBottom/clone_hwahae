@@ -73,7 +73,7 @@ ROOT_URLCONF = "myapp.config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(PROJECT_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -132,6 +132,13 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_ROOT = os.path.join(PROJECT_DIR, "uploads")
 
 MEDIA_URL = "/media/"
+
+# Email
+EMAIL_HOST = "smtp.mailgun.org"
+EMAIL_PORT = "587"
+EMAIL_HOST_USER = os.environ.get("MAILGUN_USERNAME")
+EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
+EMAIL_FROM = """programmers_server_challenge@sandbox6a171ea9085541c6bb3c1fdb2a73e3d3.mailgun.org"""
 
 # Django Rest Framework
 

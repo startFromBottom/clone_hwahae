@@ -11,7 +11,6 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer
-from django.contrib.auth import get_user_model
 from . import models
 from . import abstract_login
 
@@ -19,6 +18,21 @@ from . import abstract_login
 def log_out(request):
     logout(request)
     return redirect(reverse("users:login"))
+
+
+def complete_verification(request, key):
+
+    """ Email Verification function """
+
+    try:
+        user = models.User.objects.get(email_secret=key)
+        user.email_verified = True
+        user.email_secret = ""
+        user.save()
+    except models.User.DoesNotExist:
+        pass
+
+    return redirect(reverse("products:main"))
 
 
 class SignUpAPIView(APIView):
@@ -29,6 +43,8 @@ class SignUpAPIView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             new_user = serializer.save()
+            login(request, new_user)
+            new_user.verify_email()
             return Response(UserSerializer(new_user).data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -150,6 +166,7 @@ class NaverLoginCallback(APIView, abstract_login.LoginCallback):
                 gender=models.User.GENDER_MALE
                 if gender == "M"
                 else models.User.GENDER_FEMALE,
+                email_verified=True,
             )
         login(request, user)
 
@@ -269,6 +286,7 @@ class FacebookLoginCallback(APIView, abstract_login.LoginCallback):
                 gender=gender
                 if gender is not None
                 else models.User.GENDER_MALE,  # temporary
+                email_verified=True,
             )
             login(request, user)
             return Response("Facebook Login Succeed!")
@@ -358,6 +376,7 @@ class GoogleLoginCallback(APIView, abstract_login.LoginCallback):
                 username=f"google_name_{name}",
                 login_method=models.User.LOGIN_GOOGLE,
                 gender=models.User.GENDER_FEMALE,  # temporary
+                email_verified=True,
             )
         login(request, user)
         return Response("Google login Succeed!")
@@ -369,4 +388,3 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
-

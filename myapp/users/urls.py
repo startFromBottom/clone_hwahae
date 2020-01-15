@@ -6,6 +6,7 @@ app_name = "users"
 
 urlpatterns = [
     path("login/", views.LoginAPIView.as_view(), name="login"),
+    path("verify/<str:key>/", views.complete_verification, name="verify-email"),
     path("login/naver/", views.login_naver, name="login-naver"),
     path(
         "login/naver/callback/",

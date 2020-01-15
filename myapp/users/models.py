@@ -1,7 +1,12 @@
+import uuid
+from django.conf import settings
 from django.db import models
+from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser
-from myapp.core.models import SkinTypes
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
+from myapp.core.models import SkinTypes
 from myapp.core import models as core_models
 from myapp.core import managers as core_managers
 
@@ -54,3 +59,22 @@ class User(AbstractUser, core_models.TimeStampedModel):
     )
 
     objects = core_managers.CustomBaseUserManager()
+
+    def verify_email(self):
+        if self.email_verified is False:
+            secret = uuid.uuid4().hex[:20]
+            self.email_secret = secret
+            html_message = render_to_string(
+                template_name="email/verify_email.html", context={"secret": secret}
+            )
+            send_mail(
+                "Verify hwahae Account",  # subject
+                strip_tags(html_message),  # html message
+                settings.EMAIL_FROM,  # from
+                [self.email],  # to
+                fail_silently=False,
+                html_message=html_message,
+            )
+            self.save()
+        return
+

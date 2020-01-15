@@ -1,5 +1,6 @@
 from django.db.models.query import QuerySet
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +14,11 @@ from .serializers import (
     ProductDetailSerializer,
     Top3ProductsSerializer,
 )
+
+
+@api_view(["GET"])
+def main(request):
+    return Response("main page")
 
 
 class BasicPagination(PageNumberPagination):

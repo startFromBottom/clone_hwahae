@@ -10,5 +10,6 @@ urlpatterns = [
         views.ProductDetailAPIView.as_view(),
         name="product_detail",
     ),
+    path("", views.main, name="main"),
 ]
 
