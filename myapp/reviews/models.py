@@ -21,8 +21,9 @@ class Review(core_models.TimeStampedModel):
 
     good_review = models.TextField(default="")
     bad_review = models.TextField(default="")
+    tip = models.TextField(null=True)
     score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    favorites = models.IntegerField(default=0)
+    favorites = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     user = models.ForeignKey(
         "users.User", related_name="reviews", on_delete=models.CASCADE
     )

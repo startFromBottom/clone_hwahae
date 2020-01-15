@@ -44,13 +44,14 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "sslserver",
+    "django_seed",
 ]
 
 PROJECT_APPS = [
     "myapp.core",
+    "myapp.users",
     "myapp.products",
     "myapp.reviews",
-    "myapp.users",
     "myapp.comments",
 ]
 

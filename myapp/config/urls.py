@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
 
 
 urlpatterns = [
@@ -9,4 +8,3 @@ urlpatterns = [
     path("users/", include("myapp.users.urls", namespace="users")),
     path("reviews/", include("myapp.reviews.urls", namespace="reviews")),
 ]
-

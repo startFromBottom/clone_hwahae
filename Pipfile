@@ -21,6 +21,7 @@ dotenv = "*"
 flake8 = "*"
 django-dotenv = "*"
 requests = "*"
+django-seed = "*"
 
 [requires]
 python_version = "3.6"
