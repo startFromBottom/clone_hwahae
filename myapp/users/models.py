@@ -77,3 +77,16 @@ class User(AbstractUser, core_models.TimeStampedModel):
             self.save()
         return
 
+    def favs_products_str(self):
+        """
+        convert id's list to string
+        """
+        names = [product.name for product in self.favs_products.all()]
+        return ",".join(names)
+
+    def favs_ingredients_str(self):
+        """
+        convert id's list to string
+        """
+        names = [ingredient.name for ingredient in self.favs_ingredients.all()]
+        return ",".join(names)

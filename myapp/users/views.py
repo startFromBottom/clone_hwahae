@@ -10,9 +10,9 @@ from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserFavsSerializer
 from . import models
-from . import abstract_login
+from . import mixins
 
 
 def log_out(request):
@@ -90,7 +90,7 @@ class NaverException(Exception):
     pass
 
 
-class NaverLoginCallback(APIView, abstract_login.LoginCallback):
+class NaverLoginCallback(mixins.LoginCallbackMixin, APIView):
     def __init__(self, *args, **kwargs):
         self.error_message = ""
         return super().__init__(*args, **kwargs)
@@ -193,7 +193,7 @@ class FacebookException(Exception):
     pass
 
 
-class FacebookLoginCallback(APIView, abstract_login.LoginCallback):
+class FacebookLoginCallback(mixins.LoginCallbackMixin, APIView):
     """
     - reference
     https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
@@ -311,7 +311,7 @@ class GoogleException(Exception):
     pass
 
 
-class GoogleLoginCallback(APIView, abstract_login.LoginCallback):
+class GoogleLoginCallback(mixins.LoginCallbackMixin, APIView):
     """
     - reference
     https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
@@ -388,3 +388,27 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
+
+    def put(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("Update user data succeed!")
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MeFavsView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response(UserFavsSerializer(request.user).data)
+
+    def put(self, request):
+        serializer = UserFavsSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("Update user favorites succeed!")
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

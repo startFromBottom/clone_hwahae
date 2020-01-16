@@ -1,6 +1,6 @@
 from django.db import models
 from .queryparams_validators import SkinTypes
-from myapp.core import models as core_models
+from myapp.core import managers as core_managers
 
 
 class OtherCharException(Exception):
@@ -16,6 +16,8 @@ class Ingredient(models.Model):
     oily = models.CharField(max_length=1)
     dry = models.CharField(max_length=1)
     sensitive = models.CharField(max_length=1)
+
+    objects = core_managers.CustomModelManager()
 
     def __str__(self):
         return self.name
@@ -48,6 +50,8 @@ class Product(models.Model):
     ingredients = models.ManyToManyField("Ingredient", related_name="products",)
     monthlySales = models.IntegerField()
 
+    objects = core_managers.CustomModelManager()
+
     def imgUrl(self):
         """
         imageId to url
@@ -64,7 +68,6 @@ class Product(models.Model):
         ingredients : [220,241,262,765,820,821,896,911]
         to
         ingredients : "resignation,goalkeeper,relinquish,calf,runner,tumour,planet,morale"
-    
         """
         names = [ingredient.name for ingredient in self.ingredients.all()]
         return ",".join(names)

@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 from rest_framework.response import Response
 
 
-class LoginCallback(ABC):
+class LoginCallbackMixin(ABC):
     """
     login callback based on OAuth2.0 methods defintions
-
     Each method must run sequentially in APIView's GET method.
+
     """
 
     @abstractmethod
@@ -18,7 +18,7 @@ class LoginCallback(ABC):
         pass
 
     @abstractmethod
-    def get_userinfo_from_access_token(self):
+    def get_userinfo_from_access_token(self) -> dict:
         """
         from access token, get user profile info.
         """

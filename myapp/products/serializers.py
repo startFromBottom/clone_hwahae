@@ -34,9 +34,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "monthlySales",
         ]
 
-    def is_valid(self):
-        return super().is_valid()
-
 
 class Top3ProductsSerializer(serializers.ModelSerializer):
     class Meta:

@@ -28,4 +28,5 @@ urlpatterns = [
     path("logout/", views.log_out, name="logout"),
     path("signup/", views.SignUpAPIView.as_view(), name="signup"),
     path("me/", views.MeView.as_view(), name="me"),
+    path("me/favs/", views.MeFavsView.as_view(), name="me-favs"),
 ]
