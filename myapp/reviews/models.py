@@ -32,7 +32,7 @@ class Review(core_models.TimeStampedModel):
     )
 
     def __str__(self):
-        return f"{self.product} - {self.review}"
+        return f"{self.product} - {self.user}"
 
     class Meta:
         ordering = ("-created",)

@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.admin.utils import flatten
 from django_seed import Seed
 from myapp.users.models import User
-from myapp.products.models import Product, Ingredient
+from myapp.products import models as product_models
 
 
 class Command(BaseCommand):
@@ -28,7 +28,7 @@ class Command(BaseCommand):
             {
                 "is_staff": False,
                 "is_superuser": False,
-                "point": random.randint(1, 5),
+                "point": lambda x: random.randint(1, 5),
                 "email_verified": True,
             },
         )
@@ -36,8 +36,8 @@ class Command(BaseCommand):
         created_clean = flatten(list(created_users.values()))
 
         # many to many fields
-        favs_products = list(Product.objects.all())
-        favs_ingredients = list(Ingredient.objects.all())
+        favs_products = list(product_models.Product.objects.all())
+        favs_ingredients = list(product_models.Ingredient.objects.all())
 
         for id in created_clean:
             user = User.objects.get(id=id)
