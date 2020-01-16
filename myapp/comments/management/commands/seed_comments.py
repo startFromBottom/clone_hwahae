@@ -2,8 +2,8 @@ import random
 from django.core.management.base import BaseCommand
 from django_seed import Seed
 from myapp.users import models as user_models
-from myapp.products import models as product_models
 from myapp.reviews import models as review_models
+from myapp.comments import models as comment_models
 
 
 class Command(BaseCommand):
@@ -16,7 +16,7 @@ class Command(BaseCommand):
             "--number",
             default=1,
             type=int,
-            help="How many reviews do you want to create",
+            help="How many comments do you want to create",
         )
 
     def handle(self, *args, **options):
@@ -24,17 +24,16 @@ class Command(BaseCommand):
         seeder = Seed.seeder()
 
         users = user_models.User.objects.all()
-        products = product_models.Product.objects.all()
+        reviews = review_models.Review.objects.all()
 
         seeder.add_entity(
-            review_models.Review,
+            comment_models.Comment,
             number,
             {
-                "score": lambda x: random.randint(0, 5),
-                "user": lambda x: random.choice(users),
-                "product": lambda x: random.choice(products),
+                "comment_user": lambda x: random.choice(users),
+                "review": lambda x: random.choice(reviews),
             },
         )
 
         seeder.execute()
-        self.stdout.write(self.style.SUCCESS(f"{number} Reviews created"))
+        self.stdout.write(self.style.SUCCESS(f"{number} Comments created"))

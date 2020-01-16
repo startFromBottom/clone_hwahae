@@ -15,4 +15,4 @@ class Comment(core_models.TimeStampedModel):
     )
 
     def __str__(self):
-        return f"{self.review} - {self.comment_user}"
+        return f"{self.review} (Review) / {self.comment_user}"
