@@ -13,4 +13,5 @@ class ReviewAdmin(admin.ModelAdmin):
         "score",
         "user",
         "product",
+        "num_favorites",
     )

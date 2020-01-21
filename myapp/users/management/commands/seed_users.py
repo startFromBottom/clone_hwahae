@@ -2,8 +2,9 @@ import random
 from django.core.management.base import BaseCommand
 from django.contrib.admin.utils import flatten
 from django_seed import Seed
-from myapp.users.models import User
+from myapp.users import models as user_models
 from myapp.products import models as product_models
+from myapp.reviews import models as review_models
 
 
 class Command(BaseCommand):
@@ -23,7 +24,7 @@ class Command(BaseCommand):
         number = options.get("number")
         seeder = Seed.seeder()
         seeder.add_entity(
-            User,
+            user_models.User,
             number,
             {
                 "is_staff": False,
@@ -38,9 +39,10 @@ class Command(BaseCommand):
         # many to many fields
         favs_products = list(product_models.Product.objects.all())
         favs_ingredients = list(product_models.Ingredient.objects.all())
+        scrap_reviews = list(review_models.Review.objects.all())
 
-        for id in created_clean:
-            user = User.objects.get(id=id)
+        for user_id in created_clean:
+            user = user_models.User.objects.get(id=user_id)
 
             product_max = random.randint(1, 20)
             selected_products = random.sample(favs_products, product_max)
@@ -48,10 +50,16 @@ class Command(BaseCommand):
             ingredient_max = random.randint(1, 15)
             selected_ingredients = random.sample(favs_ingredients, ingredient_max)
 
+            scrap_max = random.randint(1, 5)
+            selected_reviews = random.sample(scrap_reviews, scrap_max)
+
             for product in selected_products:
                 user.favs_products.add(product)
 
             for ingredient in selected_ingredients:
                 user.favs_ingredients.add(ingredient)
 
-        self.stdout.write(self.style.SUCCESS("User created"))
+            for review in selected_reviews:
+                user.scrap_reviews.add(review)
+
+        self.stdout.write(self.style.SUCCESS(f"{number} User created"))

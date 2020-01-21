@@ -8,23 +8,7 @@ from .serializers import ReviewSerializer
 from myapp.products import models as product_models
 from . import models
 from myapp.core.paginators import BasicPagination
-
-
-"""
-Review 관련 api
-
-1. 특정 제품에 대한 리뷰
-
-생성(POST) - 권한 : 로그인한 사람은 모두
-
-읽기(GET) - 권한 : 로그인한 사람은 모두
--> 모두 읽으려할 때, 그 제품에 대한 리뷰를 작성하지 않으면 최대 1개밖에 못봄
-리뷰를 1개라도 작성해야 모든 리뷰를 볼 수 있음
-
-업데이트(PUT) - 권한 : 리뷰 작성자
-삭제(DELETE) - 권한 : 리뷰 작성자
-
-"""
+from myapp.users import models as user_models
 
 
 class CreateReviewAPIView(CreateAPIView):
@@ -48,6 +32,9 @@ class CreateReviewAPIView(CreateAPIView):
         if serializer.is_valid():
             review = serializer.save(user=request.user, product=product)
             review_serializer = ReviewSerializer(review)
+            user = user_models.User.objects.get_or_none(id=request.user.id)
+            user.review_count += 1
+            user.save()
             return Response(data=review_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response("Invalid data", status=status.HTTP_400_BAD_REQUEST)
@@ -55,7 +42,7 @@ class CreateReviewAPIView(CreateAPIView):
 
 class ProductReviewsAPIView(ListAPIView):
     """
-    show reviews for specific product API Defintion(GET)
+    show reviews for specific product API Defintion(GET Only)
     """
 
     permission_classes = [IsAuthenticated]
@@ -71,12 +58,20 @@ class ProductReviewsAPIView(ListAPIView):
         reviews = qs.filter(product__id__exact=product_id)
         page = self.paginate_queryset(reviews)
         serializer = self.get_serializer(page, many=True)
+        user = user_models.User.objects.get_or_none(id=request.user.id)
+        if user.review_count == 0:
+            message = f"{str(user)} 님의 소중한 리뷰를 남겨주세요. 내가 사용했던 화장품 리뷰 1개만 남기면 모든 리뷰를 확인할 수 있습니다."
+            return Response([message, serializer.data])
         return self.get_paginated_response(serializer.data)
 
 
 class ReviewAPIView(RetrieveUpdateDestroyAPIView):
     """
-    retrieve, update, delete specific review API definition(GET, PUT, DELETE)
+    retrieve, update, delete specific review API definition
+
+    retrieve -> GET
+    update -> PUT
+    delete -> DELETE
     """
 
     permission_classes = [IsAuthenticated]

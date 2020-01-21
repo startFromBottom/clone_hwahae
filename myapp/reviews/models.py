@@ -24,7 +24,9 @@ class Review(core_models.TimeStampedModel):
     bad_review = models.TextField(default="")
     tip = models.TextField(null=True)
     score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    favorites = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    favorite_users = models.ManyToManyField(
+        "users.User", related_name="reviews_favorite",
+    )
     user = models.ForeignKey(
         "users.User", related_name="reviews", on_delete=models.CASCADE
     )
@@ -39,3 +41,6 @@ class Review(core_models.TimeStampedModel):
 
     class Meta:
         ordering = ("-created",)
+
+    def num_favorites(self):
+        return len(self.favorite_users.all())

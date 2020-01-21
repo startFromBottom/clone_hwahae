@@ -56,6 +56,8 @@ class User(AbstractUser, core_models.TimeStampedModel):
     favs_ingredients = models.ManyToManyField(
         "products.Ingredient", related_name="users",
     )
+    review_count = models.IntegerField(default=0)
+    scrap_reviews = models.ManyToManyField("reviews.Review", related_name="users",)
 
     objects = core_managers.CustomBaseUserManager()
 
