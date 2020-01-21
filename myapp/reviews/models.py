@@ -2,6 +2,7 @@ from django.db import models
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from myapp.core import models as core_models
+from myapp.core import managers as core_managers
 
 
 class Photo(core_models.TimeStampedModel):
@@ -30,6 +31,8 @@ class Review(core_models.TimeStampedModel):
     product = models.ForeignKey(
         "products.Product", related_name="reviews", on_delete=models.CASCADE
     )
+
+    objects = core_managers.CustomModelManager()
 
     def __str__(self):
         return f"{self.product} - {self.user}"

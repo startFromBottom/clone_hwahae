@@ -383,6 +383,9 @@ class GoogleLoginCallback(mixins.LoginCallbackMixin, APIView):
 
 
 class MeView(APIView):
+    """
+    show or update login user's information API
+    """
 
     permission_classes = [IsAuthenticated]
 
@@ -399,6 +402,9 @@ class MeView(APIView):
 
 
 class MeFavsView(APIView):
+    """
+    show or update login user's favorite 
+    """
 
     permission_classes = [IsAuthenticated]
 

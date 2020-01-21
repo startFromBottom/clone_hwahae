@@ -93,7 +93,3 @@ class UserFavsSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-
-    def is_valid(self):
-
-        return super().is_valid()

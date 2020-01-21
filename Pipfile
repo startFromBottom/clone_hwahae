@@ -22,6 +22,7 @@ flake8 = "*"
 django-dotenv = "*"
 requests = "*"
 django-seed = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.6"

@@ -7,9 +7,9 @@ class CommentAdmin(admin.ModelAdmin):
 
     """ Comment Admin Definition """
 
-    # list_display = (
-    #     "review",
-    #     "comment_user",
-    #     "content",
-    # )
+    list_display = (
+        "content",
+        "review",
+        "comment_user",
+    )
     pass

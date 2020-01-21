@@ -14,16 +14,12 @@ from .serializers import (
     ProductDetailSerializer,
     Top3ProductsSerializer,
 )
+from myapp.core.paginators import BasicPagination
 
 
 @api_view(["GET"])
 def main(request):
     return Response("main page")
-
-
-class BasicPagination(PageNumberPagination):
-    page_size = 50
-    page_size_query_param = "page_size"
 
 
 class SortProducts:
@@ -46,13 +42,16 @@ class SortProducts:
 
 class ProductsListAPIView(ListAPIView):
 
-    """ list of products API Definition """
+    """ list of products API Definition(GET) """
 
     permission_classes = [IsAuthenticated]
 
     paginator = BasicPagination()
     queryset = Product.objects.all()
     serializer_class = ProductsListSerializer
+
+    def get(self, request):
+        return self.list(request)
 
     def filter_queryset(self, queryset):
         """
@@ -78,7 +77,6 @@ class ProductsListAPIView(ListAPIView):
             return exception_response
 
         products_qs = self.get_queryset()
-        skin_type = query_params.get("skin_type")
 
         category = query_params.get("category", None)
         exclude_ingredients = query_params.get("exclude_ingredient", None)
