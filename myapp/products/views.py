@@ -76,7 +76,7 @@ class ProductsListAPIView(ListAPIView):
         if exception_response:
             return exception_response
 
-        products_qs = self.get_queryset()
+        products_qs = self.get_queryset()  # all
 
         category = query_params.get("category", None)
         exclude_ingredients = query_params.get("exclude_ingredient", None)

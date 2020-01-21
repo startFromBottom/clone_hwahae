@@ -2,18 +2,7 @@ from rest_framework import serializers
 from .models import Review
 
 
-class CreateReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review
-        fields = (
-            "good_review",
-            "bad_review",
-            "tip",
-            "score",
-        )
-
-
-class ProductReviewsSerializer(serializers.ModelSerializer):
+class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = (
@@ -23,3 +12,4 @@ class ProductReviewsSerializer(serializers.ModelSerializer):
             "score",
             "user",
         )
+        read_only_fields = ("user",)

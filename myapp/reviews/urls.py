@@ -14,4 +14,5 @@ urlpatterns = [
         views.ProductReviewsAPIView.as_view(),
         name="product-reviews",
     ),
+    path("<int:review_id>/", views.ReviewAPIView.as_view(), name="review",),
 ]
