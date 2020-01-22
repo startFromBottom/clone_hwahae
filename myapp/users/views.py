@@ -5,13 +5,28 @@ from django.conf import settings
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    RetrieveUpdateAPIView,
+    RetrieveDestroyAPIView,
+    RetrieveAPIView,
+    ListAPIView,
+)
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, UserFavsSerializer
+from .serializers import (
+    UserSerializer,
+    UserFavsSerializer,
+    MeScrapsSerializer,
+    MeReviewsSerializer,
+)
 from . import models
 from . import mixins
+from myapp.core.paginators import BasicPagination
+from myapp.reviews import serializers as review_serializers
+from myapp.reviews import models as review_models
+from myapp.reviews import views as review_views
 
 
 def log_out(request):
@@ -38,11 +53,13 @@ class SignUpAPIView(CreateAPIView):
 
     """ Sign up By Email API View Definition """
 
+    serializer_class = UserSerializer
+
     def post(self, request):
         return self.create(request)
 
     def create(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             new_user = serializer.save()
             login(request, new_user)
@@ -384,18 +401,29 @@ class GoogleLoginCallback(mixins.LoginCallbackMixin, APIView):
         return Response("Google login Succeed!")
 
 
-class MeView(APIView):
+class MeView(RetrieveUpdateAPIView):
     """
-    show or update login user's information API
+    show or update login user's information API View Definition
+    
+    retrieve -> GET
+    update -> PUT
+
     """
 
     permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
 
     def get(self, request):
-        return Response(UserSerializer(request.user).data)
+        return self.retrieve(request)
+
+    def retrieve(self, request):
+        return Response(self.get_serializer(request.user).data)
 
     def put(self, request):
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        return self.update(request)
+
+    def update(self, request):
+        serializer = self.get_serializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response("Update user data succeed!")
@@ -403,21 +431,109 @@ class MeView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MeFavsView(APIView):
+class MeFavsView(RetrieveUpdateAPIView):
     """
-    show or update login user's favorite 
+    show or update login user's favorites API View Definition
+
+    retreive -> GET
+    update -> PUT
+
     """
 
     permission_classes = [IsAuthenticated]
+    serializer_class = UserFavsSerializer
 
     def get(self, request):
-        return Response(UserFavsSerializer(request.user).data)
+        return self.retrieve(request)
+
+    def retrieve(self, request):
+        return Response(self.get_serializer(request.user).data)
 
     def put(self, request):
-        serializer = UserFavsSerializer(request.user, data=request.data, partial=True)
+        return self.update(request)
+
+    def update(self, request):
+        serializer = self.get_serializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response("Update user favorites succeed!")
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class MeReviewsView(ListAPIView):
+    """
+    retrieve login user's reviews API Definition
+
+    create / retrieve / update / destory specific review 
+    -> implemented in myapp.reviews.views (CreatedReviewAPIView, ProductReviewsAPIView)
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = MeReviewsSerializer
+    queryset = review_models.Review.objects.all()
+    paginator = BasicPagination()
+
+    def get(self, request):
+        return self.list(request)
+
+    def list(self, request):
+        qs = self.get_queryset()
+        my_id = request.user.id
+        my_reviews = qs.filter(user__id=my_id)
+        page = self.paginate_queryset(my_reviews)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+class MeScrapsView(RetrieveAPIView):
+    """
+    retrieve login user's API Definition
+
+    retrieve : GET
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = MeScrapsSerializer
+
+    def get(self, request):
+        return self.retrieve(request)
+
+    def retrieve(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class MeSpecificScrapView(RetrieveDestroyAPIView):
+    """
+    retrieve, destroy my specific scrap API Definition
+
+    retrieve -> GET
+    destory -> DELETE
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = review_serializers.ReviewSerializer
+
+    def get(self, request, review_id):
+        return self.retrieve(request, review_id)
+
+    def retrieve(self, request, review_id):
+        my_reviews = request.user.scrap_reviews.all()
+        for review in my_reviews:
+            if review.id == review_id:
+                serializer = self.get_serializer(review)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, review_id):
+        return self.destroy(request, review_id)
+
+    def destroy(self, request, review_id):
+        my_reviews = request.user.scrap_reviews.all()
+        for review in my_reviews:
+            if review.id == review_id:
+                request.user.scrap_reviews.remove(review)
+                request.user.save()
+                return Response("delete success", status=status.HTTP_200_OK)
+        return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)

@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from django.conf import settings
 from django.db import models
 from django.core.mail import send_mail
@@ -92,3 +93,31 @@ class User(AbstractUser, core_models.TimeStampedModel):
         """
         names = [ingredient.name for ingredient in self.favs_ingredients.all()]
         return ",".join(names)
+
+    def get_age_range(self):
+        pass
+
+    def num_scraps(self):
+        return len(self.scrap_reviews.all())
+
+    def scrap_review_info(self):
+        data = []
+        for review in self.scrap_reviews.all():
+            each = {
+                "review_id": review.id,
+                "review_user": {
+                    "nickname": review.user.nickname,
+                    "birthdate": review.user.birthdate,
+                    "review_count": review.user.review_count,
+                },
+                "review_product": {
+                    "name": review.product.name,
+                    "imgUrl": review.product.imgUrl(),
+                },
+                "good_review": review.good_review,
+                "bad_review": review.bad_review,
+                "tip": review.tip,
+                "score": review.score,
+            }
+            data.append(each)
+        return data

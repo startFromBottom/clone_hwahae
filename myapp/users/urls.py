@@ -28,5 +28,12 @@ urlpatterns = [
     path("logout/", views.log_out, name="logout"),
     path("signup/", views.SignUpAPIView.as_view(), name="signup"),
     path("me/", views.MeView.as_view(), name="me"),
-    path("me/favs/", views.MeFavsView.as_view(), name="me-favs"),  #
+    path("me/reviews/", views.MeReviewsView.as_view(), name="me-reviews"),
+    path("me/favs/", views.MeFavsView.as_view(), name="me-favs"),
+    path("me/scraps/", views.MeScrapsView.as_view(), name="me-scraps"),
+    path(
+        "me/scraps/<int:review_id>/",
+        views.MeSpecificScrapView.as_view(),
+        name="me-scrap",
+    ),
 ]

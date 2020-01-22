@@ -14,12 +14,14 @@ urlpatterns = [
         views.ProductReviewsAPIView.as_view(),
         name="product-reviews",
     ),
-    path("<int:review_id>/", views.ReviewAPIView.as_view(), name="review",),
+    path("<int:review_id>/", views.SpecificReviewAPIView.as_view(), name="review",),
     path(
-        "<int:review_id>/scrap", views.ScrapReviewAPIView.as_view(), name="scrap-review"
+        "scrap/<int:review_id>/",
+        views.ScrapReviewAPIView.as_view(),
+        name="scrap-review",
     ),
     path(
-        "<int:review_id>/favs/",
+        "favs/<int:review_id>/",
         views.FavoriteReviewAPIView.as_view(),
         name="favorite-review",
     ),

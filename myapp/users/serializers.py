@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User
 from myapp.products import models as product_models
+from myapp.reviews import models as review_models
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,6 +14,12 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "username",
+            "nickname",
+            "gender",
+            "skin_type",
+            "birthdate",
+            "num_scraps",
+            "review_count",
         )
 
     def create(self, validated_data):
@@ -93,3 +100,31 @@ class UserFavsSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class MeReviewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = review_models.Review
+        fields = (
+            "id",
+            "good_review",
+            "bad_review",
+            "tip",
+            "score",
+        )
+
+
+class MeScrapsSerializer(serializers.ModelSerializer):
+
+    scrap_infos = serializers.ReadOnlyField(source="scrap_review_info")
+
+    class Meta:
+        model = User
+        fields = ("scrap_infos",)
+
+    def validate(self, data):
+        return super().validate(data)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+

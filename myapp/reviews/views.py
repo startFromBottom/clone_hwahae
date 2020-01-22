@@ -69,9 +69,9 @@ class ProductReviewsAPIView(ListAPIView):
         return self.get_paginated_response(serializer.data)
 
 
-class ReviewAPIView(RetrieveUpdateDestroyAPIView):
+class SpecificReviewAPIView(RetrieveUpdateDestroyAPIView):
     """
-    retrieve, update, delete specific review API definition
+    retrieve, update, destory specific review API definition
 
     retrieve -> GET
     update -> PUT
