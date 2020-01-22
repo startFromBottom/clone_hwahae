@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, reverse
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -37,7 +38,9 @@ class CreateReviewAPIView(CreateAPIView):
             user.save()
             return Response(data=review_serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response("Invalid data", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                review_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class ProductReviewsAPIView(ListAPIView):
@@ -60,7 +63,8 @@ class ProductReviewsAPIView(ListAPIView):
         serializer = self.get_serializer(page, many=True)
         user = user_models.User.objects.get_or_none(id=request.user.id)
         if user.review_count == 0:
-            message = f"{str(user)} 님의 소중한 리뷰를 남겨주세요. 내가 사용했던 화장품 리뷰 1개만 남기면 모든 리뷰를 확인할 수 있습니다."
+            message = f"{str(user)} 님의 소중한 리뷰를 남겨주세요. "
+            message += "내가 사용했던 화장품 리뷰 1개만 남기면 모든 리뷰를 확인할 수 있습니다."
             return Response([message, serializer.data])
         return self.get_paginated_response(serializer.data)
 
@@ -95,7 +99,7 @@ class ReviewAPIView(RetrieveUpdateDestroyAPIView):
         if not review:
             return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(review)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, review_id, **kwargs):
         return self.update(request, review_id, **kwargs)
@@ -109,7 +113,7 @@ class ReviewAPIView(RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(review)
         if serializer.is_valid():
             review = serializer.save()
-            return Response(self.get_serializer(review).data)
+            return Response(self.get_serializer(review).data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -124,3 +128,62 @@ class ReviewAPIView(RetrieveUpdateDestroyAPIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
         review.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class ScrapReviewAPIView(APIView):
+
+    """ do or cancel scrap review API Definition (POST only) """
+
+    def post(self, request, review_id):
+
+        user = request.user
+        review = models.Review.objects.get_or_none(id=review_id)
+        if not review:
+            return Response("review does not exist.", status=status.HTTP_404_NOT_FOUND)
+        scrap_reviews = user.scrap_reviews.all()
+        if review in scrap_reviews:
+            # already exists -> cancel scrap
+            user.scrap_reviews.remove(review)
+            user.save()
+            return Response("scrap is canceled", status=status.HTTP_200_OK)
+        else:
+            # scrap
+            user.scrap_reviews.add(review)
+            user.save()
+            return Response("scrap ok", status=status.HTTP_200_OK)
+
+
+class FavoriteReviewAPIView(APIView):
+
+    """ Like or cancel review API Definition (POST, GET) """
+
+    def post(self, request, review_id):
+
+        user = request.user
+        review = models.Review.objects.get_or_none(id=review_id)
+        if not review:
+            return Response("review does not exist.", status=status.HTTP_404_NOT_FOUND)
+        favorite_users = review.favorite_users.all()
+        if user in favorite_users:
+            # already exists -> cancel favorite
+            review.favorite_users.remove(user)
+            review.save()
+            return Response("Cancel like", status=status.HTTP_200_OK)
+        else:
+            # like
+            review.favorite_users.add(user)
+            review.save()
+            return Response("Add like", status=status.HTTP_200_OK)
+
+    def get(self, request, review_id):
+        """
+        show the number of favorites of review
+        """
+        review = models.Review.objects.get_or_none(id=review_id)
+        if not review:
+            return Response("review does not exist.", status=status.HTTP_404_NOT_FOUND)
+
+        return Response(
+            data={"num of favorites": review.num_favorites()}, status=status.HTTP_200_OK
+        )
+

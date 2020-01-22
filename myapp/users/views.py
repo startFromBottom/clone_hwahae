@@ -5,9 +5,8 @@ from django.conf import settings
 from django.shortcuts import redirect, reverse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
-
-# from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, UserFavsSerializer
@@ -35,11 +34,14 @@ def complete_verification(request, key):
     return redirect(reverse("products:main"))
 
 
-class SignUpAPIView(APIView):
+class SignUpAPIView(CreateAPIView):
 
     """ Sign up By Email API View Definition """
 
     def post(self, request):
+        return self.create(request)
+
+    def create(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             new_user = serializer.save()
@@ -418,3 +420,4 @@ class MeFavsView(APIView):
             return Response("Update user favorites succeed!")
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

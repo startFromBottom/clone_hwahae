@@ -38,7 +38,7 @@ class UserFavsSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        check data is validated, if validated -> update instance in
+        check data is validated, if validated, then update instance in
         self.update method
         """
         if not data:
