@@ -24,6 +24,8 @@ django-dotenv = "*"
 requests = "*"
 django-seed = "*"
 django-debug-toolbar = "*"
+django-storages = "*"
+boto3 = "*"
 
 [requires]
 python_version = "3.6"

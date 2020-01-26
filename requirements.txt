@@ -1,7 +1,8 @@
 asgiref==3.2.3
 awsebcli==3.17.0
 blessed==1.17.0
-botocore==1.13.50
+boto3==1.11.9
+botocore==1.14.9
 cached-property==1.5.1
 cement==2.8.2
 certifi==2019.11.28
@@ -13,6 +14,7 @@ django-debug-toolbar==2.1
 django-dotenv==1.4.2
 django-seed==0.1.9
 django-sslserver==0.22
+django-storages==1.8
 djangorestframework==3.11.0
 docker==3.7.3
 docker-compose==1.23.2
@@ -40,6 +42,7 @@ python-dateutil==2.8.0
 pytz==2019.2
 PyYAML==3.13
 requests==2.20.1
+s3transfer==0.3.2
 semantic-version==2.5.0
 six==1.11.0
 sqlparse==0.3.0

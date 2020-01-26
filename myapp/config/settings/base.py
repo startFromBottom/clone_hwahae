@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "3+2f6@u^vz-m12)6#5m7l8o+ktoj47kh*v(bh60%zw+cfzq1f@"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get("DEBUG"))
 
 ALLOWED_HOSTS = ["*"]
 
@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "sslserver",
     "django_seed",
+    "storages",
 ]
 
 PROJECT_APPS = [
@@ -156,3 +157,16 @@ REST_FRAMEWORK = {
 # For Development
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+if not DEBUG:
+
+    DEFAULT_FILE_STORAGE = "myapp.config.custom_storages.UploadStorage"
+    STATICFILES_STORAGE = "myapp.config.custom_storages.StaticStorage"
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = "programmers-server-challenge-uem123"
+    AWS_AUTO_CREATE_BUCKET = True
+    AWS_BUCKET_ACL = "public-read"
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
