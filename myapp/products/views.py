@@ -4,10 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
-from rest_framework.exceptions import server_error, ValidationError
-from .models import Ingredient, Product
+from .models import Product
 from .queryparams_validators import ParamsCheck, APIParams
 from .serializers import (
     ProductsListSerializer,
@@ -22,30 +20,11 @@ def main(request):
     return Response("main page")
 
 
-class SortProducts:
-
-    """ Sort Products class Definition """
-
-    @staticmethod
-    def sort_products(param: str, querySet: QuerySet):
-        """
-        sort product by following criterias
-        1) skin_type's score(Descending Order)
-        2) monthlySales(Ascending Order)
-        """
-        products_list = list(querySet)
-        products_list.sort(  # if data size is bigger, this code will be inefficient..?
-            key=lambda x: (-x.calculate_score(param), x.monthlySales)
-        )
-        return products_list
-
-
 class ProductsListAPIView(ListAPIView):
 
     """ list of products API Definition(GET) """
 
     permission_classes = [IsAuthenticated]
-
     paginator = BasicPagination()
     queryset = Product.objects.all()
     serializer_class = ProductsListSerializer
@@ -69,7 +48,7 @@ class ProductsListAPIView(ListAPIView):
 
         """
         query_params = self.request.query_params
-        # validate
+        # validate query parameters
         exception_response = ParamsCheck.validate(
             query_params, APIParams.products_list_params
         )
@@ -124,13 +103,12 @@ class ProductsListAPIView(ListAPIView):
         if string is None:
             return []
         str_list = string.strip().split(",")
-        str_list = [each.strip() for each in str_list]
-        return str_list
+        return [each.strip() for each in str_list]
 
 
 class ProductDetailAPIView(APIView):
 
-    """ show detail of product and top3 score products API Definition """
+    """ show detail of product and top3 score products API Definition (POST, PUT, DELETE)"""
 
     permission_classes = [IsAuthenticated]
 
@@ -161,3 +139,21 @@ class ProductDetailAPIView(APIView):
         data = [product_detail_data] + top3_products_data
 
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+class SortProducts:
+
+    """ Sort Products class Definition """
+
+    @staticmethod
+    def sort_products(param: str, querySet: QuerySet):
+        """
+        sort product by following criterias
+        1) skin_type's score(Descending Order)
+        2) monthlySales(Ascending Order)
+        """
+        products_list = list(querySet)
+        products_list.sort(  # if data size is bigger, this code will be inefficient..?
+            key=lambda product: (-product.calculate_score(param), product.monthlySales)
+        )
+        return products_list

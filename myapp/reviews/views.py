@@ -1,11 +1,13 @@
+from collections import Counter
 from django.shortcuts import redirect, reverse
+from django.db.models.query import QuerySet
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import ReviewSerializer
+from .serializers import ReviewSerializer, PhotoSerializer
 from myapp.products import models as product_models
 from . import models
 from myapp.core.paginators import BasicPagination
@@ -38,9 +40,7 @@ class CreateReviewAPIView(CreateAPIView):
             user.save()
             return Response(data=review_serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response(
-                review_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductReviewsAPIView(ListAPIView):
@@ -53,12 +53,27 @@ class ProductReviewsAPIView(ListAPIView):
     serializer_class = ReviewSerializer
     queryset = models.Review.objects.all()
 
+    def get_reviews_statistics(self, reviews: QuerySet) -> dict:
+
+        review_scores = [review.score for review in reviews]
+        average_score = round(sum(review_scores) / len(review_scores), 2)
+        score_counter = dict(Counter(review_scores))
+
+        return {"averge_score": average_score, "score_counter": score_counter}
+
     def get(self, request, product_id, **kwargs):
         return self.list(request, product_id, **kwargs)
 
     def list(self, request, product_id, **kwargs):
         qs = self.get_queryset()
         reviews = qs.filter(product__id__exact=product_id)
+        if not reviews:
+            return Response("reviews don't exist", status=status.HTTP_404_NOT_FOUND)
+        reviews_statistics = self.get_reviews_statistics(reviews)
+        print(reviews_statistics)
+        for review in reviews:
+            print(review.five_photos())
+
         page = self.paginate_queryset(reviews)
         serializer = self.get_serializer(page, many=True)
         user = user_models.User.objects.get_or_none(id=request.user.id)
@@ -96,6 +111,7 @@ class SpecificReviewAPIView(RetrieveUpdateDestroyAPIView):
 
     def retrieve(self, request, review_id, **kwargs):
         review = self.get_review(review_id)
+        print(review.photo_urls())
         if not review:
             return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(review)
@@ -186,4 +202,103 @@ class FavoriteReviewAPIView(APIView):
         return Response(
             data={"num of favorites": review.num_favorites()}, status=status.HTTP_200_OK
         )
+
+
+class ReviewCreatePhotosAPIView(CreateAPIView):
+    """
+    create photos for specific review API Definition(POST only)
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = PhotoSerializer
+    queryset = models.Review.objects.all()
+
+    def post(self, request, review_id):
+        return self.create(request, review_id)
+
+    def create(self, request, review_id):
+        try:
+            review = self.get_queryset().get(id=review_id)
+        except models.Review.DoesNotExist:
+            return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)
+        if request.user != review.user:
+            return Response(
+                "Not allowed to other users", status=status.HTTP_403_FORBIDDEN
+            )
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(review=review)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReviewSpecificPhotoAPIView(RetrieveUpdateDestroyAPIView):
+
+    """ read / update / delete specific review's photos
+    API Defintion """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = PhotoSerializer
+    queryset = models.Review.objects.all()
+    lookup_url_kwarg = "photo_id"
+
+    def get_review(self, review_id):
+        qs = self.get_queryset()
+        try:
+            review = qs.get(id=review_id)
+            return review
+        except models.Review.DoesNotExist:
+            return None
+
+    def get(self, request, review_id, photo_id):
+        return self.retrieve(request, review_id, photo_id)
+
+    def retrieve(self, request, review_id, photo_id):
+        review = self.get_review(review_id)
+        if not review:
+            return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)
+        photo = models.Photo.objects.get_or_none(id=photo_id)
+        if not photo:
+            return Response("photo not exists", status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(photo)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, review_id, photo_id):
+        return self.update(request, review_id, photo_id)
+
+    def update(self, request, review_id, photo_id):
+        review = self.get_review(review_id)
+        if not review:
+            return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)
+        if request.user != review.user:
+            return Response(
+                "Not allowed to other users", status=status.HTTP_403_FORBIDDEN
+            )
+        photo = models.Photo.objects.get_or_none(id=photo_id)
+        if not photo:
+            return Response("photo not exists", status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            photo = serializer.save(review=review)
+            return Response(self.get_serializer(photo).data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, review_id, photo_id):
+        return self.destroy(request, review_id, photo_id)
+
+    def destory(self, request, review_id, photo_id):
+        review = self.get_review(review_id)
+        if not review:
+            return Response("review does not exists", status=status.HTTP_404_NOT_FOUND)
+        if request.user != review.user:
+            return Response(
+                "Not allowed to other users", status=status.HTTP_403_FORBIDDEN
+            )
+        photo = models.Photo.objects.get_or_none(id=photo_id)
+        if not photo:
+            return Response("photo not exists", status=status.HTTP_404_NOT_FOUND)
+        photo.delete()
+        return Response(status=status.HTTP_200_OK)
 

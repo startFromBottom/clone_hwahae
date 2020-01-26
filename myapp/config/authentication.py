@@ -5,6 +5,16 @@ from myapp.users.models import User
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
+
+    """
+    custom jwt authentication definition class 
+
+    When deploy to AWS elasticbeanstalk,
+    should do WSGIPassAuthorization On
+    https://www.django-rest-framework.org/api-guide/authentication/
+    https://docs.aws.amazon.com/ko_kr/elasticbeanstalk/latest/dg/create-deploy-python-container.html
+    """
+
     def authenticate(self, request):
         try:
             # if token not in request's Header -> not permitted

@@ -16,6 +16,16 @@ urlpatterns = [
     ),
     path("<int:review_id>/", views.SpecificReviewAPIView.as_view(), name="review",),
     path(
+        "<int:review_id>/photos/create/",
+        views.ReviewCreatePhotosAPIView.as_view(),
+        name="create-photo",
+    ),
+    path(
+        "<int:review_id>/photos/<int:photo_id>/",
+        views.ReviewSpecificPhotoAPIView.as_view(),
+        name="review-photos",
+    ),
+    path(
         "scrap/<int:review_id>/",
         views.ScrapReviewAPIView.as_view(),
         name="scrap-review",

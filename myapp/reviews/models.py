@@ -15,6 +15,11 @@ class Photo(core_models.TimeStampedModel):
         "Review", related_name="photos", on_delete=models.CASCADE
     )
 
+    objects = core_managers.CustomModelManager()
+
+    def __str__(self):
+        return self.caption
+
 
 class Review(core_models.TimeStampedModel):
 
@@ -44,3 +49,6 @@ class Review(core_models.TimeStampedModel):
 
     def num_favorites(self):
         return len(self.favorite_users.all())
+
+    def photo_urls(self):
+        return [photo.file.url for photo in self.photos.all()]

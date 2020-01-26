@@ -26,7 +26,6 @@ from . import mixins
 from myapp.core.paginators import BasicPagination
 from myapp.reviews import serializers as review_serializers
 from myapp.reviews import models as review_models
-from myapp.reviews import views as review_views
 
 
 def log_out(request):

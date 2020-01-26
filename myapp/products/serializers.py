@@ -3,6 +3,7 @@ from .models import Product
 
 
 class ProductsListSerializer(serializers.ModelSerializer):
+
     ingredients = serializers.CharField(source="ingredient_str")
 
     class Meta:
