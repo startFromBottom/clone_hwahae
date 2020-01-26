@@ -59,7 +59,12 @@ class ProductReviewsAPIView(ListAPIView):
         average_score = round(sum(review_scores) / len(review_scores), 2)
         score_counter = dict(Counter(review_scores))
 
-        return {"averge_score": average_score, "score_counter": score_counter}
+        return {
+            "statistics": {
+                "averge_score": average_score,
+                "score_counter": score_counter,
+            }
+        }
 
     def get(self, request, product_id, **kwargs):
         return self.list(request, product_id, **kwargs)
@@ -71,8 +76,6 @@ class ProductReviewsAPIView(ListAPIView):
             return Response("reviews don't exist", status=status.HTTP_404_NOT_FOUND)
         reviews_statistics = self.get_reviews_statistics(reviews)
         print(reviews_statistics)
-        for review in reviews:
-            print(review.five_photos())
 
         page = self.paginate_queryset(reviews)
         serializer = self.get_serializer(page, many=True)
@@ -81,7 +84,7 @@ class ProductReviewsAPIView(ListAPIView):
             message = f"{str(user)} 님의 소중한 리뷰를 남겨주세요. "
             message += "내가 사용했던 화장품 리뷰 1개만 남기면 모든 리뷰를 확인할 수 있습니다."
             return Response([message, serializer.data])
-        return self.get_paginated_response(serializer.data)
+        return Response([reviews_statistics, serializer.data])
 
 
 class SpecificReviewAPIView(RetrieveUpdateDestroyAPIView):
