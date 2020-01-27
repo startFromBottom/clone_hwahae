@@ -1,5 +1,5 @@
 from django.db import models
-from .queryparams_validators import SkinTypes
+from myapp.core.models import SkinTypes
 from myapp.core import managers as core_managers
 
 
@@ -30,7 +30,7 @@ class Product(models.Model):
     CATEGORY_SKIN = "skincare"
     CATEGORY_MASK = "maskpack"
     CATEGORY_SUN = "suncare"
-    CATEGORY_BASE = "baskemakeup"
+    CATEGORY_BASE = "basemakeup"
 
     CATEGORY_CHOICES = (
         (CATEGORY_SKIN, "Skin care"),
@@ -49,7 +49,6 @@ class Product(models.Model):
     )
     ingredients = models.ManyToManyField("Ingredient", related_name="products",)
     monthlySales = models.IntegerField()
-
     objects = core_managers.CustomModelManager()
 
     def imgUrl(self):
@@ -80,16 +79,14 @@ class Product(models.Model):
         score = 0
         for ingredient in self.ingredients.all():
             if skin_type == SkinTypes.OILY:
-                score += Product.convert_char_to_score(ingredient.oily)
+                score += self.convert_char_to_score(ingredient.oily)
             elif skin_type == SkinTypes.SENSITIVE:
-                score += Product.convert_char_to_score(ingredient.sensitive)
+                score += self.convert_char_to_score(ingredient.sensitive)
             else:  # SkinTypes.DRY
-                score += Product.convert_char_to_score(ingredient.dry)
-
+                score += self.convert_char_to_score(ingredient.dry)
         return score
 
-    @classmethod
-    def convert_char_to_score(cls, char):
+    def convert_char_to_score(self, char):
         """
         유익함("O") -> +1
         영향없음("") -> +0

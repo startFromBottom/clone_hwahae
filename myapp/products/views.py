@@ -84,13 +84,14 @@ class ProductsListAPIView(ListAPIView):
         """
         skin_type = self.request.query_params.get("skin_type")
         queryset = self.filter_queryset(self.get_queryset())
-        if isinstance(queryset, Response):  # exception
+        if isinstance(queryset, Response):  # exception (invalid query parameters)
             return queryset
         products_list = SortProducts.sort_products(param=skin_type, querySet=queryset)
         page = self.paginate_queryset(products_list)
         if len(page) != 0:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            # self.get_paginated_response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response("Can't find data", status=status.HTTP_404_NOT_FOUND)
 
@@ -108,7 +109,7 @@ class ProductsListAPIView(ListAPIView):
 
 class ProductDetailAPIView(APIView):
 
-    """ show detail of product and top3 score products API Definition (POST, PUT, DELETE)"""
+    """ show detail of product and top3 score products API Definition """
 
     permission_classes = [IsAuthenticated]
 
@@ -150,10 +151,10 @@ class SortProducts:
         """
         sort product by following criterias
         1) skin_type's score(Descending Order)
-        2) monthlySales(Ascending Order)
+        2) price(Ascending Order)
         """
         products_list = list(querySet)
-        products_list.sort(  # if data size is bigger, this code will be inefficient..?
-            key=lambda product: (-product.calculate_score(param), product.monthlySales)
+        products_list.sort(
+            key=lambda product: (-product.calculate_score(param), product.price)
         )
         return products_list

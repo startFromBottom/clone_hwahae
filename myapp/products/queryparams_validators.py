@@ -27,7 +27,7 @@ class ParamsCheck:
     """
 
     @classmethod
-    def _contain_invalidate_param(cls, query_params: QueryDict, possible_params: tuple):
+    def _contain_invalid_param(cls, query_params: QueryDict, possible_params: tuple):
         """
         if True -> raise exception -> return 404 response in other method
         """
@@ -57,9 +57,9 @@ class ParamsCheck:
         return None
 
     @classmethod
-    def validate(cls, query_params: QueryDict, possible_params: list):
+    def validate(cls, query_params: QueryDict, possible_params: tuple):
         try:
-            cls._contain_invalidate_param(query_params, possible_params)
+            cls._contain_invalid_param(query_params, possible_params)
             cls._have_skin_type_param(query_params, possible_params)
             cls._valid_skin_type(query_params)
         except InvalidParamsException:
