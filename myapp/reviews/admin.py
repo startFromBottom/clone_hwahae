@@ -16,11 +16,11 @@ class ReviewAdmin(admin.ModelAdmin):
     inlines = (PhotoInline,)
 
     list_display = (
+        "product",
+        "user",
         "good_review",
         "bad_review",
         "score",
-        "user",
-        "product",
         "num_favorites",
     )
 
@@ -30,7 +30,7 @@ class PhotoAdmin(admin.ModelAdmin):
 
     """ Photo Admin Definition """
 
-    list_display = ("__str__", "get_thumbnail")
+    list_display = ("__str__", "review", "get_thumbnail")
 
     def get_thumbnail(self, obj):
         return mark_safe(f'<img width=50px; src="{obj.file.url}" />')

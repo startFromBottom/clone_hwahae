@@ -47,17 +47,20 @@ class Command(BaseCommand):
             product_max = random.randint(1, 20)
             selected_products = random.sample(favs_products, product_max)
 
-            ingredient_max = random.randint(1, 15)
-            selected_ingredients = random.sample(favs_ingredients, ingredient_max)
-
-            scrap_max = random.randint(1, 5)
-            selected_reviews = random.sample(scrap_reviews, scrap_max)
-
             for product in selected_products:
                 user.favs_products.add(product)
 
+            ingredient_max = random.randint(1, 15)
+            selected_ingredients = random.sample(favs_ingredients, ingredient_max)
+
             for ingredient in selected_ingredients:
                 user.favs_ingredients.add(ingredient)
+
+            try:
+                scrap_max = random.randint(1, 5)
+                selected_reviews = random.sample(scrap_reviews, scrap_max)
+            except ValueError:  # Sample larger than population or is negative
+                continue
 
             for review in selected_reviews:
                 user.scrap_reviews.add(review)
