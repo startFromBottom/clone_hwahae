@@ -1,13 +1,12 @@
 # 버드뷰(화해) 서버 과제 구현
 
-
 - url : programmer-server-challenge.2pmehxwmw3.ap-northeast-2.elasticbeanstalk.com 
 
+- production 환경에서도 DEBUG=TRUE로 설정하였습니다.
 
 - 로그인 기능 추가로, 로그인 후 api 열람이 가능합니다.
 
-- 로그인 방법 (admin 계정) : user/login url에서 아래 json 입력
-
+- 로그인 방법 (admin 계정) : users/login 혹은 qwnrlkfn5123!slkji@c*vlkvcxivh/ url에서 아래 정보 입력
 
         {
             "username" : "ebadmin",
@@ -31,7 +30,7 @@
 ### 추가 구현 (화해 클론)
 
 
-1. admin 기능(url : admin/)
+1. admin 기능(url : qwnrlkfn5123!slkji@c*vlkvcxivh/)
 
 2. 사용자 관련 기능(myapp.users 앱에 기능 구현되어 있습니다.)
 
