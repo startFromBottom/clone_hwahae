@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
+from drf_yasg.utils import swagger_auto_schema
+
 from .models import Product
 from .queryparams_validators import ParamsCheck, APIParams
 from .serializers import (
@@ -12,6 +14,8 @@ from .serializers import (
     ProductDetailSerializer,
     Top3ProductsSerializer,
 )
+from . import error_collections
+from . import api_documents
 from myapp.core.paginators import BasicPagination
 
 
@@ -22,13 +26,26 @@ def main(request):
 
 class ProductsListAPIView(ListAPIView):
 
-    """ list of products API Definition(GET) """
+    """
+    list of products API Definition(GET)
+    
+    """
 
     permission_classes = [IsAuthenticated]
     paginator = BasicPagination()
     queryset = Product.objects.all()
     serializer_class = ProductsListSerializer
 
+    @swagger_auto_schema(
+        operation_description=api_documents.products_list_api_documents,
+        manual_parameters=api_documents.products_list_params,
+        responses={
+            400: error_collections.PRODUCTS_LIST_CONTAIN_INVALID_PARAM_400.as_md()
+            + error_collections.NOT_HAVE_SKIN_TYPE_PARAM_400.as_md()
+            + error_collections.INVALID_SKIN_TYPE_PARAM_400.as_md(),
+            403: error_collections.AUTHENTICATION_ERROR_403.as_md(),
+        },
+    )
     def get(self, request):
         return self.list(request)
 
@@ -109,10 +126,20 @@ class ProductsListAPIView(ListAPIView):
 
 class ProductDetailAPIView(APIView):
 
-    """ show detail of product and top3 score products API Definition """
+    """ show details of product and top3 score products API Definition """
 
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description=api_documents.product_detail_api_documents,
+        manual_parameters=api_documents.product_detail_params,
+        responses={
+            400: error_collections.PRODUCT_DETAIL_CONTAIN_INVALID_PARAM_400.as_md()
+            + error_collections.NOT_HAVE_SKIN_TYPE_PARAM_400.as_md()
+            + error_collections.INVALID_SKIN_TYPE_PARAM_400.as_md(),
+            403: error_collections.AUTHENTICATION_ERROR_403.as_md(),
+        },
+    )
     def get(self, request, product_pk):
 
         query_params = request.query_params

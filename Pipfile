@@ -26,6 +26,8 @@ django-seed = "*"
 django-debug-toolbar = "*"
 django-storages = "*"
 boto3 = "*"
+django-rest-swagger = "*"
+drf-yasg = "*"
 
 [requires]
 python_version = "3.6"

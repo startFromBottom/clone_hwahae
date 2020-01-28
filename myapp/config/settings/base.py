@@ -47,6 +47,7 @@ THIRD_PARTY_APPS = [
     "sslserver",
     "django_seed",
     "storages",
+    "drf_yasg",
 ]
 
 PROJECT_APPS = [

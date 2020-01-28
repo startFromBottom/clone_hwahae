@@ -441,4 +441,3 @@ class ProductDetailAPIViewTest(APITestCase, URLPatternsTestCase):
         expected = ["name-1", "name-2", "name-4", "name-1"]
         real = [each.get("name") for each in response.data]
         self.assertEquals(expected, real)
-

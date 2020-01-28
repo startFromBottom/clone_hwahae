@@ -29,6 +29,9 @@ from myapp.reviews import models as review_models
 
 
 def log_out(request):
+
+    """ log out function definition """
+
     logout(request)
     return redirect(reverse("users:login"))
 
@@ -85,6 +88,9 @@ class LoginAPIView(APIView):
             return Response(data={"token": encoded_jwt})
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def get(self, request):
+        return Response("Write username and password")
 
 
 def login_naver(request):

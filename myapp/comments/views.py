@@ -8,9 +8,9 @@ from django.shortcuts import render
 
 읽기(GET) - 권한 : 로그인한 사람은 모두
 
-업데이트(PUT) - 권한 : 리뷰 작성자
+업데이트(PUT) - 권한 : 댓글 작성자
 
-삭제(DELETE) - 권한 : 리뷰 작성자
+삭제(DELETE) - 권한 : 댓글 작성자
 
 
 """
