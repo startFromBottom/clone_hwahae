@@ -21,7 +21,7 @@ from myapp.core.paginators import BasicPagination
 
 @api_view(["GET"])
 def main(request):
-    return Response("main page")
+    return Response("main page, login by readme.md")
 
 
 class ProductsListAPIView(ListAPIView):

@@ -1,3 +1,4 @@
+import os
 from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
@@ -20,7 +21,7 @@ schema_view_v1 = get_schema_view(
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path(os.environ.get("ADMIN") + "/", admin.site.urls),
     path("", include("myapp.products.urls", namespace="products")),
     path("users/", include("myapp.users.urls", namespace="users")),
     path("reviews/", include("myapp.reviews.urls", namespace="reviews")),
